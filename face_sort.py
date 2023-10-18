@@ -7,7 +7,7 @@ from concurrent.futures import ThreadPoolExecutor
 from tqdm import tqdm
 
 # Initialize logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 
 def classify_age(age):
     if age <= 17:
@@ -25,9 +25,13 @@ def process_image(image_name, input_folder, output_folder, copy, dry_run, backup
 
         # Analyze image with DeepFace
         obj = DeepFace.analyze(img_path=image_path, actions=['age', 'gender', 'race'])
-        gender = obj['gender']
-        ethnicity = obj['dominant_race']
-        age = obj['age']
+        
+        # Debugging: Log DeepFace output
+        logging.info(f"DeepFace Output for {image_name}: {obj}")
+
+        gender = obj[0]['dominant_gender']
+        ethnicity = obj[0]['dominant_race']
+        age = obj[0]['age']
         age_group = classify_age(age)
 
         # Create and set destination folder
@@ -61,8 +65,7 @@ def main(input_folder, output_folder, copy, dry_run, backup):
     images = [f for f in os.listdir(input_folder) if f.endswith(('.jpg', '.png'))]
     
     with ThreadPoolExecutor() as executor:
-        list(tqdm(executor.map(lambda x: process_image(x, input_folder, output_folder, copy, dry_run, backup), images), 
-total=len(images)))
+        list(tqdm(executor.map(lambda x: process_image(x, input_folder, output_folder, copy, dry_run, backup), images), total=len(images)))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Sort images based on attributes.')
@@ -71,5 +74,6 @@ if __name__ == "__main__":
     parser.add_argument('-cp', action='store_true', help='Copy images instead of moving.')
     parser.add_argument('--dry_run', action='store_true', help='Simulates the sorting without actually moving or copying files.')
     parser.add_argument('-bk', action='store_true', help='Backup original images.')
+    
     args = parser.parse_args()
     main(args.input_folder, args.output_folder, args.cp, args.dry_run, args.bk)
