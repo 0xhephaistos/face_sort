@@ -24,7 +24,7 @@ def process_image(image_name, input_folder, output_folder, copy, dry_run, backup
         image_path = os.path.join(input_folder, image_name)
 
         # Analyze image with DeepFace
-        obj = DeepFace.analyze(img_path=image_path, actions=['age', 'gender', 'race'])
+        obj = DeepFace.analyze(img_path=image_path, actions=['age', 'gender', 'race'], detector_backend="retinaface")
         
         # Debugging: Log DeepFace output
         logging.info(f"DeepFace Output for {image_name}: {obj}")
