@@ -48,5 +48,5 @@ python face_sort.py /path/to/input_folder --output_folder /path/to/output_folder
 
 ## Optional Features
 
-Dry Run: To see what the script will do without actually moving or copying any files, use the --dry_run option.
-Backup: To create a backup of the original images, use the -bk option.
+* Dry Run: To see what the script will do without actually moving or copying any files, use the --dry_run option.
+* Backup: To create a backup of the original images, use the -bk option.
